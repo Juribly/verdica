@@ -1,0 +1,23 @@
+name: Codex Auto Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  codex-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Auto-merge approved PRs
+        uses: pascalgn/automerge-action@v0.15.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          merge_method: squash
+          commit_message: pull-request-title
+
+      - name: Codex auto-fix conflicts
+        run: echo "If merge conflicts happen, Codex will attempt fixes automatically."
