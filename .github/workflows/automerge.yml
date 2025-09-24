@@ -1,0 +1,33 @@
+name: Auto Merge PRs (Codex)
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+      - labeled
+
+permissions:
+  contents: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-merge when label present or from trusted authors
+        uses: pascalgn/automerge-action@v0.15.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MERGE_METHOD: squash
+          MERGE_DELETE_BRANCH: true
+          UPDATE_METHOD: rebase
+          # Variante A: PRs mit Label "automerge" werden gemerged:
+          MERGE_LABELS: automerge
+          # Variante B (optional zusätzlich): Author-Whitelist (durch Kommas getrennt)
+          # MERGE_FILTER_AUTHOR: Juribly,codex-bot,github-actions[bot]
+          MERGE_RETRIES: 24
+          MERGE_RETRY_SLEEP: 10
