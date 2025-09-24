@@ -1,23 +1,29 @@
-name: Codex Auto Merge
+name: GPT-5 Codex
 
 on:
+  issues:
+    types: [opened, edited]
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize]
 
 jobs:
-  codex-merge:
+  codex:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Auto-merge approved PRs
+      - name: Run GPT-5 Codex
+        uses: openai/codex-action@v1
+        with:
+          model: gpt-5-codex
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  automerge:
+    runs-on: ubuntu-latest
+    needs: codex
+    steps:
+      - name: Enable auto-merge
         uses: pascalgn/automerge-action@v0.15.6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          merge_method: squash
-          commit_message: pull-request-title
-
-      - name: Codex auto-fix conflicts
-        run: echo "If merge conflicts happen, Codex will attempt fixes automatically."
