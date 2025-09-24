@@ -1,17 +1,26 @@
-name: Auto-Merge Codex PRs
+name: Codex Direct Commit
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+  workflow_dispatch:
 
 jobs:
-  automerge:
+  codex-commit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Enable auto-merge
-        uses: pascalgn/automerge-action@v0.15.6
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Commit Codex Changes
+        run: |
+          git config --global user.name "Codex Bot"
+          git config --global user.email "codex-bot@example.com"
+          git add .
+          git commit -m "Codex automated commit" || echo "No changes to commit"
+          git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import React from "react";
 
 function Judge({ position }) {
   return (
@@ -19,32 +20,52 @@ function Accused() {
   );
 }
 
-function Audience({ count = 10, radius = 4 }) {
-  const items = [];
-  for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 1.5 - Math.PI * 0.75;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    items.push(
-      <mesh key={i} position={[x, 0.2, z]}>
-        <sphereGeometry args={[0.25, 16, 16]} />
-        <meshStandardMaterial color="skyblue" />
-      </mesh>
-    );
-  }
-  return <>{items}</>;
+function AudienceMember({ position }) {
+  return (
+    <mesh position={position}>
+      <sphereGeometry args={[0.3, 16, 16]} />
+      <meshStandardMaterial color="steelblue" />
+    </mesh>
+  );
+}
+
+function Floor() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]}>
+      <planeGeometry args={[20, 20]} />
+      <meshStandardMaterial color="lightgray" />
+    </mesh>
+  );
 }
 
 export default function Courtroom() {
+  const audience = [];
+  const radius = 5;
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 1.2 + Math.PI * 0.2;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    audience.push([x, 0.3, z]);
+  }
+
   return (
-    <Canvas camera={{ position: [6, 5, 6], fov: 50 }}>
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[5, 10, 5]} intensity={1.2} />
+    <Canvas camera={{ position: [0, 5, 10], fov: 50 }}>
+      {/* Licht */}
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[10, 10, 5]} intensity={1.2} />
+
+      {/* Objekte */}
+      <Floor />
       <Accused />
       <Judge position={[0, 0.3, -3]} />
-      <Judge position={[-2, 0.3, -3]} />
       <Judge position={[2, 0.3, -3]} />
-      <Audience count={12} />
+      <Judge position={[-2, 0.3, -3]} />
+
+      {audience.map((pos, i) => (
+        <AudienceMember key={i} position={pos} />
+      ))}
+
+      {/* Kamera-Steuerung */}
       <OrbitControls />
     </Canvas>
   );
