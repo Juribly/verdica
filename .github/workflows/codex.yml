@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # ensures full history so rebase works
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -27,4 +25,4 @@ jobs:
           git pull --rebase origin main
           git add .
           git commit -m "Codex auto commit" || echo "No changes to commit"
-          git push origin main
+          git push https://x-access-token:${{ secrets.CODEX_PAT }}@github.com/Juribly/verdica.git
