@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verdica Posts Test</title>
+</head>
+<body>
+  <h1>Neuen Post erstellen</h1>
+  <input type="text" id="user_id" placeholder="User ID eingeben" />
+  <input type="text" id="content" placeholder="Post Inhalt eingeben" />
+  <button onclick="createPost()">Post erstellen</button>
+
+  <h2>Antwort:</h2>
+  <pre id="response"></pre>
+
+  <script>
+    async function createPost() {
+      const user_id = document.getElementById('user_id').value;
+      const content = document.getElementById('content').value;
+
+      const res = await fetch('http://localhost:4000/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id, content })
+      });
+      const data = await res.json();
+      document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
