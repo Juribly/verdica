@@ -1,28 +1,16 @@
-name: GPT-5 Codex
+name: Auto-Merge Codex PRs
 
 on:
-  issues:
-    types: [opened, edited]
   pull_request:
     types: [opened, synchronize]
 
 jobs:
-  codex:
+  automerge:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Run GPT-5 Codex
-        uses: openai/codex-action@v1
-        with:
-          model: gpt-5-codex
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  automerge:
-    runs-on: ubuntu-latest
-    needs: codex
-    steps:
       - name: Enable auto-merge
         uses: pascalgn/automerge-action@v0.15.6
         env:
