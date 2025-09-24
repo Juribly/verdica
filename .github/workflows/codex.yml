@@ -10,17 +10,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Apply Codex Changes
+        uses: openai/codex-action@v1
         with:
-          node-version: 18
-
-      - name: Commit Codex Changes
-        run: |
-          git config --global user.name "Codex Bot"
-          git config --global user.email "codex-bot@example.com"
-          git add .
-          git commit -m "Codex automated commit" || echo "No changes to commit"
-          git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.CODEX_PAT }}
+          model: gpt-5-codex
