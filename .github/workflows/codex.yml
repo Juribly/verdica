@@ -11,24 +11,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # alle Commits holen, sonst schlägt rebase fehl
+          fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+      # Dummy-Änderung erzwingen
+      - name: Generate code changes (dummy)
+        run: |
+          echo "Neue Zeile von Codex am $(date)" >> codex-log.txt
 
-      - name: Commit Codex Changes
+      - name: Commit and push
         run: |
           git config --global user.name "Codex Bot"
           git config --global user.email "codex-bot@users.noreply.github.com"
 
-          # sicherstellen, dass wir die neueste remote history haben
-          git pull --rebase origin main || true
+          # Prüfen ob Änderungen existieren
+          if git diff --quiet; then
+            echo "Keine Änderungen gefunden, breche ab."
+            exit 0
+          fi
 
           git add .
-          git commit -m "Codex auto commit" || echo "No changes to commit"
+          git commit -m "Codex auto commit"
 
+          # Lokale Branch mit Remote synchronisieren
+          git pull --rebase origin main
+
+          # Pushen mit PAT
           git push https://x-access-token:${{ secrets.CODEX_PAT }}@github.com/Juribly/verdica.git HEAD:main
