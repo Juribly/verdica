@@ -12,17 +12,27 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # vollständige History für rebase
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Commit Codex Changes
+      - name: Configure Git
         run: |
           git config --global user.name "Codex Bot"
           git config --global user.email "codex-bot@users.noreply.github.com"
-          git pull --rebase origin main
+
+      - name: Pull latest changes
+        run: git pull --rebase origin main
+
+      - name: Commit Codex Changes
+        run: |
           git add .
           git commit -m "Codex auto commit" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.CODEX_PAT }}@github.com/Juribly/verdica.git
+
+      - name: Push Codex Changes
+        run: |
+          git push https://x-access-token:${{ secrets.CODEX_PAT }}@github.com/Juribly/verdica.git main
