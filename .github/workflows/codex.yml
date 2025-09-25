@@ -1,4 +1,4 @@
-name: Codex Direct Commit
+﻿name: Codex Direct Commit
 
 on:
   workflow_dispatch:
@@ -13,29 +13,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.CODEX_PAT }}   # PAT für Auth
           fetch-depth: 0
 
-      # Dummy-Änderung erzwingen
+      # Dummy change so wir einen echten Commit sehen
       - name: Generate code changes (dummy)
         run: |
-          echo "Neue Zeile von Codex am $(date)" >> codex-log.txt
+          echo "Neue Zeile von Codex am 09/25/2025 09:06:25" >> codex-log.txt
 
       - name: Commit and push
         run: |
           git config --global user.name "Codex Bot"
           git config --global user.email "codex-bot@users.noreply.github.com"
 
-          # Prüfen ob Änderungen existieren
           if git diff --quiet; then
-            echo "Keine Änderungen gefunden, breche ab."
+            echo "No changes to commit."
             exit 0
           fi
 
           git add .
           git commit -m "Codex auto commit"
-
-          # Lokale Branch mit Remote synchronisieren
           git pull --rebase origin main
-
-          # Pushen mit PAT
-          git push https://x-access-token:${{ secrets.CODEX_PAT }}@github.com/Juribly/verdica.git HEAD:main
+          git push origin main
