@@ -1,7 +1,9 @@
 ﻿name: Codex Auto Commit
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   commit:
