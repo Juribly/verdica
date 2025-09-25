@@ -1,37 +1,17 @@
-﻿name: Codex Direct Commit
+﻿name: Codex Auto Commit
 
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  codex-commit:
+  commit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.CODEX_PAT }}   # PAT für Auth
-          fetch-depth: 0
-
-      # Dummy change so wir einen echten Commit sehen
-      - name: Generate code changes (dummy)
+      - uses: actions/checkout@v3
+      - name: Commit changes
         run: |
-          echo "Neue Zeile von Codex am 09/25/2025 09:06:25" >> codex-log.txt
-
-      - name: Commit and push
-        run: |
-          git config --global user.name "Codex Bot"
-          git config --global user.email "codex-bot@users.noreply.github.com"
-
-          if git diff --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-
+          git config user.name "Codex Bot"
+          git config user.email "codex-bot@example.com"
           git add .
-          git commit -m "Codex auto commit"
-          git pull --rebase origin main
+          git commit -m "Codex auto update" || echo "No changes"
           git push origin main
