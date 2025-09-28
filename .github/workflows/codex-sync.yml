@@ -1,0 +1,19 @@
+name: Codex Sync
+
+on:
+  push:
+    branches:
+      - "**"   # reagiert auf alle Branches (work, codex-output, main, etc.)
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Ensure commit and sync
+        run: |
+          git config user.name "Codex Bot"
+          git config user.email "codex-bot@example.com"
+          git add .
+          git commit -m "Codex sync commit" || echo "No changes"
+          git push origin HEAD
